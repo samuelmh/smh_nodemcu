@@ -1,0 +1,4 @@
+*.pyc
+
+#Kate editor
+*.kate-swp
