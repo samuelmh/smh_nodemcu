@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-
+import readline  # Provides history and cursor moving on raw_input
+import signal
 import threading
 
 class AsyncReader(threading.Thread):
@@ -28,19 +29,22 @@ class Terminal(object):
 		self.func_read = func_read
 		self.func_write = func_write
 		self.reader = AsyncReader(connector, func_write)
-
+		self.flag_exit = False
 
 	def start(self):
+		def raise_EOF(*args, **kwargs):
+			raise EOFError
 		self.reader.start()
+		signal.signal(signal.SIGINT, raise_EOF)
+		signal.signal(signal.SIGTERM, raise_EOF)
 		self.func_write('\nTerminal, press CTRL-D to exit.\n\n')
-		flag_exit = False
-		while not flag_exit:
+		while not self.flag_exit:
 			try:
 				msg = self.func_read()
 				self.send_msg(msg)
-			except Exception as e:
-				flag_exit = True
-				self.func_write('\n\nExiting terminal.\n')
+			except EOFError:
+				self.flag_exit = True
+		self.func_write('\n\nExiting terminal.\n')
 		self.stop()
 
 	def stop(self):

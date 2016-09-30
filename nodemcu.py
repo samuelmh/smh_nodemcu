@@ -4,7 +4,6 @@
 #https://www.youtube.com/watch?v=kNke39OZ2k0
 
 import click
-import readline  # Provides history and cursor moving on raw_input
 from serial import Serial
 
 from smh_nodemcu.terminal import Terminal
