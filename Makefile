@@ -52,18 +52,43 @@ install: ## Create a development environment (virtualenv).
 	@echo "Done"
 
 
+#
+### Firmware development
+#
+fw-install: ## Download the necesary tools to build your own firmware
+	@echo "Creating firmware development environment"
+	@git clone https://github.com/nodemcu/nodemcu-firmware.git $(PROJECT_PATH)'/fw/nodemcu-firmware'
+
+fw-compile: ## Complile a custom firmware
+	@echo "Compiling the new firmware on a Docker container"
+	docker run --rm -ti -v $(PROJECT_PATH)/fw/nodemcu-firmware:/opt/nodemcu-firmware marcelstoer/nodemcu-build
+
+
 
 #
 ### Flash the board
 #
+
+flash-float-4mb-all: flash-float-4mb-v20161127  ## Flash the board with the latest custom firmware (float type)
+
+flash-integer-4mb-all: flash-integer-4mb-v20161127  ## Flash the board with the lastest custom firmware (integer type)
+
 flash-float-4mb: flash-float-4mb-v20160917  ## Flash the board with the latest custom firmware (float type)
 
 flash-integer-4mb: flash-integer-4mb-v20160917  ## Flash the board with the lastest custom firmware (integer type)
 
 
+# --> Almost all modules
+flash-float-4mb-v20161127: ## Flash the board with the float firmware, version v20161127
+	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_float_master_20161127-1449.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
 
+flash-integer-4mb-v20161127: ## Flash the board with the integer firmware, version v20161127
+	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_integer_master_20161127-1449.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
+
+
+# --> Ligh
 flash-float-4mb-v20160917: ## Flash the board with the float firmware, version v20160917
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 bin/nodemcu_float_master_20160917-1140.bin 0x3fc000 bin/esp_init_data_default.bin -fm dio -fs 32m
+	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_float_master_20160917-1140.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
 
 flash-integer-4mb-v20160917: ## Flash the board with the integer firmware, version v20160917
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 bin/nodemcu_integer_master_20160917-1140.bin 0x3fc000 bin/esp_init_data_default.bin -fm dio -fs 32m
+	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_integer_master_20160917-1140.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m

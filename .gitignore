@@ -2,3 +2,8 @@
 
 #Kate editor
 *.kate-swp
+
+*.local
+
+#Firmware is an independent project
+fw/nodemcu-firmware
