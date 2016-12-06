@@ -110,25 +110,26 @@ def rm(config, filename):
 @pass_config
 def add(config, origin, destination):
     """Upload a file to the board."""
-    bs = 512
     try:
         with open(origin,'r') as f_origin:
-            data = f_origin.read().replace("'","\'").replace("\n","\\n").replace("\t","\\t")
+            data = f_origin.read()
     except:
         click.echo("Origin file {0} does NOT exist.".format(origin))
     else:
-        chunks = [
-            'file.write(\'{0}\')'.format(data[offset:offset+bs])
-            for offset
-            in range(0,len(data),bs)
-        ]
         connector = Serial(config.port, config.baudrate, timeout=1)
         terminal = Terminal(connector, None, None)
         response = terminal.send_msg_then_read('if file.exists("{0}") then print("Destination file EXISTS, remove it first.") else file.open("{0}","w");print("OK") end'.format(destination))
         response = response.split("\r\n")[1]
         if response=="OK":
+            bs = 200
+            chunks = [
+                'file.write(\'{0}\')'.format(data[offset:offset+bs].replace("'","\\'").replace("\n","\\n").replace("\t","\\t"))
+                for offset
+                in range(0,len(data),bs)
+            ]
             for chunk in chunks:
-                terminal.send_msg_then_read(chunk)
+                print chunk
+                print terminal.send_msg_then_read(chunk)
             terminal.send_msg_then_read('file.flush();file.close()')
             click.echo("OK")
         else:
@@ -143,8 +144,8 @@ def cat(config, filename):
     """Read a file from the board."""
     connector = Serial(config.port, config.baudrate, timeout=1)
     terminal = Terminal(connector, None, None)
-    response = terminal.send_msg_then_read('if file.exists("{0}") then bs=512;file.open("{0}","r");flag_read=true;while flag_read do s=file.read(block_len);print(s);if string.len(s)<bs then flag_read=false end;end;file.close();else print("File does NOT exist.") end'.format(filename))
-    click.echo("\n".join(response.split("\r\n")[1:-1]), nl=False)
+    response = terminal.send_msg_then_read('if file.exists("{0}") then bs=512;file.open("{0}","r");flag_read=true;while flag_read do s=file.read(bs);uart.write(0,s);if string.len(s)<bs then flag_read=false end;end;file.close();else print("File does NOT exist.") end'.format(filename))
+    click.echo(("\n".join(response.split("\n")[1:])[:-2]), nl=False)
 
 
 
