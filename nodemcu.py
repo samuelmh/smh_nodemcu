@@ -99,7 +99,7 @@ def rm(config, filename):
     """Remove a file from the board."""
     connector = Serial(config.port, config.baudrate, timeout=1)
     terminal = Terminal(connector, None, None)
-    response = terminal.send_msg_then_read('if file.exists("{0}") then file.remove("{0}");print("OK.") else print("File does NOT exist.") end'.format(filename))
+    response = terminal.send_msg_then_read('if file.exists("{0}") then file.remove("{0}");print("OK") else print("File does NOT exist.") end'.format(filename))
     click.echo(response.split("\r\n")[1])
     connector.close()
 
@@ -123,12 +123,12 @@ def add(config, origin, destination):
         if response=="OK":
             bs = 200
             chunks = [
-                'file.write(\'{0}\')'.format(data[offset:offset+bs].replace("'","\\'").replace("\n","\\n").replace("\t","\\t"))
+                'file.write(\'{0}\')'.format(data[offset:offset+bs].replace("\\","\\\\").replace("'","\\'").replace("\n","\\n"))
                 for offset
                 in range(0,len(data),bs)
             ]
             for chunk in chunks:
-                print chunk
+                #print chunk
                 print terminal.send_msg_then_read(chunk)
             terminal.send_msg_then_read('file.flush();file.close()')
             click.echo("OK")
