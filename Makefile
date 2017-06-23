@@ -14,11 +14,15 @@
 LIBRARY = 'smh_nodemcu'
 # Path to the virtualenv directory.
 VENVS_PATH = ~/projects/venvs
+# Default USB port
+USB_PORT_DEFAULT = '/dev/ttyUSB0'
 
 
 #Don't touch
 PROJECT_PATH = $(abspath $(lastword $(MAKEFILE_LIST)/..))
 VENV_PATH = $(VENVS_PATH)/$(LIBRARY)
+
+
 
 
 #
@@ -64,31 +68,37 @@ fw-compile: ## Complile a custom firmware
 	docker run --rm -ti -v $(PROJECT_PATH)/fw/nodemcu-firmware:/opt/nodemcu-firmware marcelstoer/nodemcu-build
 
 
-
 #
 ### Flash the board
 #
 
-flash-float-4mb-all: flash-float-4mb-v20161127  ## Flash the board with the latest custom firmware (float type)
+# Utils
+define flash_firmware
+	@python -m esptool --p $(1) write_flash 0x00000 $(2) 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
+endef
 
-flash-integer-4mb-all: flash-integer-4mb-v20161127  ## Flash the board with the lastest custom firmware (integer type)
-
-flash-float-4mb: flash-float-4mb-v20160917  ## Flash the board with the latest custom firmware (float type)
-
-flash-integer-4mb: flash-integer-4mb-v20160917  ## Flash the board with the lastest custom firmware (integer type)
-
-
-# --> Almost all modules
-flash-float-4mb-v20161127: ## Flash the board with the float firmware, version v20161127
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_float_master_20161127-1449.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
-
-flash-integer-4mb-v20161127: ## Flash the board with the integer firmware, version v20161127
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_integer_master_20161127-1449.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
+test-input-port:
+	$(eval port ?= $(USB_PORT_DEFAULT))
 
 
-# --> Ligh
-flash-float-4mb-v20160917: ## Flash the board with the float firmware, version v20160917
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_float_master_20160917-1140.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
+# Lastests firmwares
+flash-float-4mb: flash-float-4mb-v20161127  ## Flash the board with the latest custom firmware (float type)
 
-flash-integer-4mb-v20160917: ## Flash the board with the integer firmware, version v20160917
-	@python -m esptool --p /dev/ttyUSB0 write_flash 0x00000 fw/nodemcu_integer_master_20160917-1140.bin 0x3fc000 fw/esp_init_data_default.bin -fm dio -fs 32m
+flash-integer-4mb: flash-integer-4mb-v20161127  ## Flash the board with the lastest custom firmware (integer type)
+
+
+# Firmware historic
+
+# --> v20161127
+flash-float-4mb-v20161127: test-input-port ## Flash the board with the float firmware, version v20161127
+	$(call flash_firmware,${port},fw/nodemcu_float_master_20161127-1449.bin)
+
+flash-integer-4mb-v20161127: test-input-port ## Flash the board with the integer firmware, version v20161127
+	$(call flash_firmware,${port},fw/nodemcu_integer_master_20161127-1449.bin)
+
+# --> v20160917
+flash-float-4mb-v20160917: test-input-port ## Flash the board with the float firmware, version v20160917
+	$(call flash_firmware,${port},fw/nodemcu_float_master_20160917-1140.bin)
+
+flash-integer-4mb-v20160917: test-input-port ## Flash the board with the integer firmware, version v20160917
+	$(call flash_firmware,${port},fw/nodemcu_integer_master_20160917-1140.bin)
