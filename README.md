@@ -1,5 +1,5 @@
 # smh_nodemcu
-This project is a recopilation of utilities and howto documentation to ease software development into the (NodeMCU)[http://nodemcu.com/index_en.html] IoT platform based on the ESP8266 chip.
+This project is a recopilation of utilities and howto documentation to ease software development into the [NodeMCU](http://nodemcu.com/index_en.html) IoT platform based on the ESP8266 chip.
 
 ## Table of contents
 * [Getting started](#getting_started)
@@ -92,7 +92,7 @@ nodemcu --port=/dev/ttyUSB0 terminal
 You will be in the terminal, press the reset button of the board and some letters will appear in the screen. Press Ctrl+D to exit.
 
 
-## Commands  <a name="getting_started"></a>
+## Commands  <a name="commands"></a>
 Once the installation is done, there will be the `nodemcu` command available inside the virtualenv. It provides some useful features.
 
 Type `nodemcu --help` to get the available options and commands.
@@ -150,19 +150,20 @@ For more information, please see the [firmware documentation](doc/firmware.md)
 
 
 ## Examples <a name="examples"></a>
-In the folder `lua-utils`, there are some samples that can be used to test the NodeMCU capabilities as well to inspire your code. These are the current scripts:
-* `examples/wifi_ntp_http-server.lua`: connects the ESP8266 chip to an access point, takes the UTC time from a NTP server, set its internal clock and servers timestamps through a HTTP server.
+There are some samples in the `lua-utils` folder that can be used to test the NodeMCU capabilities as well to inspire your code. These are the current scripts:
+* `examples/wifi_ntp_http-server.lua`: connects to an access point, takes the UTC time from a NTP server, set its internal clock and servers timestamps through a HTTP server.
 * `utils/GM009605.lua`: class to print messages on a GM009605 128x64 screen.
 
 ### External projects
+* [iot-gateway-custom](https://github.com/beeva-samuelmunoz/iot-gateway-custom): example of a 3 layer architecture: thing-gateway-MQTT broker.
 * [iot-project-feelings](https://github.com/beeva-samuelmunoz/iot-project-feelings): set a feeling on a dial servo wheel controlled over MQTT.
 * [iot-project-presence](https://github.com/beeva-samuelmunoz/iot-project-presence): detect presence with a PIR sensor and communicate over WiFi-MQTT.
-* [iot-gateway-custom](https://github.com/beeva-samuelmunoz/iot-gateway-custom): example of a 3 layer architecture: thing-gateway-MQTT broker.
 
 
-### Tutorials
-* [Introduction to NodeMCU - Hands On](https://beeva-samuelmunoz.github.io/iot-workshop-intro/01%20Introduction/intro.html#/)
-* [Communications on NodeMCU - Hands On](https://beeva-samuelmunoz.github.io/iot-workshop-intro/02%20Communications/communications.html#/)
+
+### Tutorials - Hands On
+* [Introduction](https://beeva-samuelmunoz.github.io/iot-workshop-intro/01%20Introduction/intro.html#/)
+* [Communications](https://beeva-samuelmunoz.github.io/iot-workshop-intro/02%20Communications/communications.html#/)
 
 
 ## Links <a name="links"></a>
